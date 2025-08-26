@@ -23,7 +23,7 @@ import { uploadBufferToCloudinary } from '../config/cloudinary.js';
 });
 
 
-// Get feed with pagination
+// Get feed with pagination (update views)
 export const getFeed = asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -35,8 +35,30 @@ export const getFeed = asyncHandler(async (req, res) => {
         .limit(limit)
         .populate('user', 'username');
 
-    const userId = req.user?._id?.toString(); // logged-in user
+    const userId = req.user?._id?.toString();
 
+    if (userId) {
+        // collect posts where user hasn't viewed yet
+        const unseenPosts = posts.filter(
+            p => !p.views.some(v => v.toString() === userId)
+        );
+
+        if (unseenPosts.length > 0) {
+            const bulkOps = unseenPosts.map(p => ({
+                updateOne: {
+                    filter: { _id: p._id },
+                    update: { $push: { views: userId } }
+                }
+            }));
+
+            await Post.bulkWrite(bulkOps);
+
+            // update local array so viewsCount is correct in response
+            unseenPosts.forEach(p => p.views.push(userId));
+        }
+    }
+
+    // Prepare response
     const data = posts.map(p => ({
         id: p._id,
         user: p.user,
@@ -52,6 +74,7 @@ export const getFeed = asyncHandler(async (req, res) => {
 
     res.json({ success: true, data });
 });
+
 
 
 
