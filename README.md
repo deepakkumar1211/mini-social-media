@@ -7,7 +7,8 @@ Built with **MERN stack (MongoDB, Express.js, React, Node.js)**.
 
 ## 🚀 Live Application
 
-- **Frontend:** [https://mini-social-media-pink.vercel.app/](https://mini-social-media-pink.vercel.app)
+- **Frontend:** [https://mini-social-media-pink.vercel.app](https://mini-social-media-pink.vercel.app)
+- **Backend:** [https://mediabackend-r8i8.onrender.com](https://mediabackend-r8i8.onrender.com)
 
 ---
 
