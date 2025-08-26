@@ -114,11 +114,11 @@ export default function Feed() {
       <main className="max-w-2xl mx-auto p-4 space-y-6">
         {/*Create Post Form */}
         <div className="bg-white rounded-xl shadow-md p-4">
-          <h2 className="font-semibold text-lg mb-3">Create Post</h2>
+          <h2 className="font-semibold text-lg mb-3 text-blue-800 text-center">Add Post</h2>
           <form onSubmit={handleCreatePost} className="space-y-3">
             <input
               type="text"
-              placeholder="What's on your mind?"
+              placeholder="Write Caption"
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               className="w-full px-3 py-2 border rounded-md text-sm focus:ring focus:ring-blue-300 outline-none"
