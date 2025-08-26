@@ -7,7 +7,7 @@ Built with **MERN stack (MongoDB, Express.js, React, Node.js)**.
 
 ## 🚀 Live Application
 
-- **Frontend:** [https://train-seat-reservation-ruby.vercel.app](https://mini-social-media-pink.vercel.app)
+- **Frontend:** [https://mini-social-media-pink.vercel.app/](https://mini-social-media-pink.vercel.app)
 
 ---
 
