@@ -33,14 +33,17 @@ export const getFeed = asyncHandler(async (req, res) => {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .populate('user', 'username');
+        .populate('user', 'username') // owner
+        .populate('likes', 'username') // list of users who liked
+        .populate('views', 'username') // list of users who viewed
+        .populate('comments.user', 'username'); // list of users who commented
 
     const userId = req.user?._id?.toString();
 
     if (userId) {
         // collect posts where user hasn't viewed yet
         const unseenPosts = posts.filter(
-            p => !p.views.some(v => v.toString() === userId)
+            p => !p.views.some(v => v._id.toString() === userId)
         );
 
         if (unseenPosts.length > 0) {
@@ -53,8 +56,8 @@ export const getFeed = asyncHandler(async (req, res) => {
 
             await Post.bulkWrite(bulkOps);
 
-            // update local array so viewsCount is correct in response
-            unseenPosts.forEach(p => p.views.push(userId));
+            // update local array so viewsCount & viewsList are correct
+            unseenPosts.forEach(p => p.views.push({ _id: userId, username: req.user.username }));
         }
     }
 
@@ -65,11 +68,24 @@ export const getFeed = asyncHandler(async (req, res) => {
         mediaUrl: p.mediaUrl,
         mediaType: p.mediaType,
         caption: p.caption,
+
+        // counts
         likesCount: p.likes.length,
         viewsCount: p.views.length,
         commentsCount: p.comments.length,
-        createdAt: p.createdAt,
-        likedByMe: userId ? p.likes.some(likeId => likeId.toString() === userId) : false
+
+        // lists
+        likedBy: p.likes.map(u => ({ _id: u._id, username: u.username })),
+        viewedBy: p.views.map(u => ({ _id: u._id, username: u.username })),
+        comments: p.comments.map(c => ({
+            _id: c._id,
+            text: c.text,
+            createdAt: c.createdAt,
+            user: c.user ? { _id: c.user._id, username: c.user.username } : null
+        })),
+
+        likedByMe: userId ? p.likes.some(likeUser => likeUser._id.toString() === userId) : false,
+        createdAt: p.createdAt
     }));
 
     res.json({ success: true, data });
