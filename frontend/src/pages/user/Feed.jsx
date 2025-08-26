@@ -38,7 +38,7 @@ export default function Feed() {
         setHasMore(false);
       } else {
         setPosts((prev) =>
-          pageNum === 1 ? newPosts : [...prev, ...newPosts] // ✅ reset if page=1 else append
+          pageNum === 1 ? newPosts : [...prev, ...newPosts] // reset if page=1 else append
         );
       }
     } catch (err) {
